@@ -1,4 +1,5 @@
-from django.shortcuts import render
+
+from django.shortcuts import render, reverse
 
 DATA = {
     'omlet': {
@@ -19,12 +20,68 @@ DATA = {
     # можете добавить свои рецепты ;)
 }
 
-# Напишите ваш обработчик. Используйте DATA как источник данных
-# Результат - render(request, 'calculator/index.html', context)
-# В качестве контекста должен быть передан словарь с рецептом:
-# context = {
-#   'recipe': {
-#     'ингредиент1': количество1,
-#     'ингредиент2': количество2,
-#   }
-# }
+
+def home_view(request):
+    template_name = 'calculator/home.html'
+    # впишите правильные адреса страниц, используя
+    # функцию `reverse`
+
+    pages = {
+        'Рецепт омлета': reverse('omlet'),
+        'Рецепт пасты': reverse('pasta'),
+        'Рецепт бутера': reverse('buter')
+    }
+
+    # context и параметры render менять не нужно
+    # подбробнее о них мы поговорим на следующих лекциях
+    context = {
+        'pages': pages
+    }
+    return render(request, template_name, context)
+
+
+def servings(dicts, n):
+    result = {}
+    for a, b in dicts.items():
+        result[a] = b * n
+    return result
+
+
+def omlet(request):
+    amount = int(request.GET.get('servings', 1))
+    template_name = 'calculator/index.html'
+    if amount == 1:
+        recipe = DATA['omlet']
+    else:
+        recipe = servings(DATA['omlet'],amount)
+    context = {
+         'recipe':  recipe
+    }
+    return render(request, template_name, context)
+
+
+def pasta(request):
+    amount = int(request.GET.get('servings', 1))
+    template_name = 'calculator/index.html'
+    if amount == 1:
+        recipe = DATA['pasta']
+    else:
+        recipe = servings(DATA['pasta'], amount)
+    context = {
+         'recipe':  recipe
+    }
+    return render(request, template_name, context)
+
+
+def buter(request):
+    amount = int(request.GET.get('servings', 1))
+    template_name = 'calculator/index.html'
+    if amount == 1:
+        recipe = DATA['buter']
+    else:
+        recipe = servings(DATA['buter'], amount)
+    context = {
+         'recipe':  recipe
+    }
+    return render(request, template_name, context)
+
